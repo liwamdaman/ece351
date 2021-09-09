@@ -1,0 +1,3 @@
+[submodule "lib"]
+	path = lib
+	url = https://git.uwaterloo.ca/ece351-1219/lib.git
