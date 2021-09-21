@@ -40,37 +40,37 @@ class TestWRegexSimpleData {
 		// r2.wave
 		// Copy the regex from above and paste it here.
 		// Generalize the regex to accept multiple input values, either 0 or 1.
-		regexs.add("A:(\s0|\s1)*;\\s*");
+		regexs.add("A:( 0| 1)*;\\s*");
 
 		// r3.wave
 		// Copy the regex from above and paste it here.
 		// Generalize the regex to allow whitespace between the last signal and the semi-colon.
-		regexs.add("A:(\s0|\s1)*(\s)*;\\s*");
+		regexs.add("A:( 0| 1)*( )*;\\s*");
 
 		// r4.wave
 		// Copy the regex from above and paste it here.
 		// Generalize the regex to allow multi-character pin names.
-		regexs.add("[A-Z]+:(\s0|\s1)*(\s)*;\\s*");
+		regexs.add("[A-Z]+:( 0| 1)*( )*;\\s*");
 
 		// r5.wave
 		// Copy the regex from above and paste it here.
 		// Generalize the regex to allow lower case in pin names.
-		regexs.add("[a-zA-Z]+:(\s0|\s1)*(\s)*;\\s*");
+		regexs.add("[a-zA-Z]+:( 0| 1)*( )*;\\s*");
 
 		// r6.wave
 		// Copy the regex from above and paste it here.
 		// Generalize the regex to allow multiple spaces between values.
-		regexs.add("[a-zA-Z]+(\s)*:(\s0|\s1)*(\s)*;\\s*");
+		regexs.add("[a-zA-Z]+( )*:( 0| 1)*( )*;\\s*");
 
 		// r7.wave
 		// Copy the regex from above and paste it here.
 		// Generalize the regex for whitespace again.
-		regexs.add("[a-zA-Z]+(\s)*:((\s)*(0|1))*(\s)*;\\s*");
+		regexs.add("[a-zA-Z]+( )*:(( )*(0|1))*( )*;\\s*");
 
 		// r8.wave
 		// Copy the regex from above and paste it here.
 		// Generalize the regex to allow multiple pins
-		regexs.add("([a-zA-Z]+(\s)*:((\s)*(0|1))*(\s)*;\\s*)+");
+		regexs.add("([a-zA-Z]+( )*:(( )*(0|1))*( )*;\\s*)+");
 		
 	};
 	
