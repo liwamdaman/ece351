@@ -12,7 +12,7 @@
 # You should have at least one line for each lab.
 lab0 mentor Hari
 lab1 role nobody
-lab2 role userid
+lab2 role nobody
 lab3 role userid
 lab4 role userid
 lab5 role userid
