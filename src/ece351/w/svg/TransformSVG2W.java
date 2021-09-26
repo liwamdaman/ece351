@@ -29,15 +29,12 @@ package ece351.w.svg;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.parboiled.common.ImmutableList;
 
 import ece351.w.ast.WProgram;
 import ece351.w.ast.Waveform;
-
 
 public final class TransformSVG2W {
 	
@@ -54,18 +51,39 @@ public final class TransformSVG2W {
 	 * those comments confusing, and asked for them to be removed.
 	 * 
 	 * @see #COMPARE_Y_X 
-	 * @see #transformLinesToWaveform(List, List)
+	 * @see #transformLinesToWaveform(List, Pin)
 	 * @see java.util.ArrayList
 	 * @see java.util.LinkedHashSet
 	 */
 	public static final WProgram transform(final PinsLines pinslines) {
 		final List<Line> lines = new ArrayList<Line>(pinslines.segments);
 		final List<Pin> pins = new ArrayList<Pin>(pinslines.pins);
-
-// TODO: longer code snippet
-throw new ece351.util.Todo351Exception();
-
-		return new WProgram(waveforms);
+		
+		Collections.sort(lines, COMPARE_Y_X);
+		Collections.sort(pins, new Comparator<Pin>() {
+			@Override
+			public int compare(final Pin p1, final Pin p2) {
+				if(p1.y < p2.y) return -1;
+				if(p1.y > p2.y) return 1;
+				return 0;
+			}
+		});
+		
+		ImmutableList<Waveform> wProgramWaveforms = ImmutableList.of();
+		
+		int linesIndex = 0;
+		final int y_off = 50;
+		for (Pin pin : pins) {
+			int y_mid = pin.y;
+			List<Line> waveformLines = new ArrayList<Line>();
+			while (linesIndex < lines.size() && Math.abs(lines.get(linesIndex).y1 - y_mid) <= y_off) {
+				waveformLines.add(lines.get(linesIndex));
+				linesIndex+=1;
+			}
+			wProgramWaveforms = wProgramWaveforms.append(transformLinesToWaveform(waveformLines, pin));
+		}
+		
+		return new WProgram(wProgramWaveforms);
 	}
 
 	/**
@@ -83,11 +101,21 @@ throw new ece351.util.Todo351Exception();
 	 * @see #transform(PinsLines)
 	 * @see Pin#id
 	 */
-	private static Waveform transformLinesToWaveform(final List<Line> lines, final List<Pin> pins) {
+	private static Waveform transformLinesToWaveform(final List<Line> lines, final Pin pin) {
 		if(lines.isEmpty()) return null;
-
-// TODO: longer code snippet
-throw new ece351.util.Todo351Exception();
+		
+		Collections.sort(lines, COMPARE_X);
+		
+		Waveform waveform = new Waveform(pin.id);
+		int y_mid = pin.y;
+		for (Line line : lines) {
+			// We only need to look at horizontal lines to extract bit data
+			if (line.y1 == line.y2) {
+				waveform = line.y1 > y_mid ? waveform.append("0") : waveform.append("1");
+			}
+		}
+		
+		return waveform;
 	}
 
 	/**

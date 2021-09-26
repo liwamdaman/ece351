@@ -26,10 +26,6 @@
 
 package ece351.objectcontract;
 
-
-
-
-
 public final class TestObjectContract extends TestObjectContractBase {
 
 	/**
@@ -40,8 +36,7 @@ public final class TestObjectContract extends TestObjectContractBase {
 		// this is an anonymous inner class that is a subclass of Object
 		return new Object() {
 			public boolean equals(Object ob) { 
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
+				return false;
 			}
 		};
 	}
@@ -53,9 +48,8 @@ throw new ece351.util.Todo351Exception();
 	Object constructAlwaysTrue() {
 		// this is an anonymous inner class that is a subclass of Object
 		return new Object() {
-			public boolean equals(Object ob) { 
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
+			public boolean equals(Object ob) {
+				return true;
 			}
 		};
 	}
@@ -68,9 +62,9 @@ throw new ece351.util.Todo351Exception();
 		// this is an anonymous inner class that is a subclass of Object
 		return new Object() {
 			private boolean flag = true;
-			public boolean equals(Object ob) { 
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
+			public boolean equals(Object ob) {
+				flag = !flag;
+				return flag;
 			}
 		};
 	}
@@ -81,8 +75,9 @@ throw new ece351.util.Todo351Exception();
 	@Override
 	SymmetryBreaker[] constructSymmetryBreakers() {
 		final SymmetryBreaker[] result = new SymmetryBreaker[2];
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
+		result[0] = new SymmetryBreaker(0, null);
+		result[1] = new SymmetryBreaker(0, result[0]);
+		return result;
 	}
 
 	
@@ -93,8 +88,10 @@ throw new ece351.util.Todo351Exception();
 	TransitivityBreaker[] constructTransitivityBreakers() {
 		final double epsilon6 = TestObjectContractBase.TransitivityBreaker.epsilon * 0.6d;
 		final TransitivityBreaker[] result = new TransitivityBreaker[3];
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
+		result[0] = new TransitivityBreaker(0);
+		result[1] = new TransitivityBreaker(TestObjectContractBase.TransitivityBreaker.epsilon * 0.5d);
+		result[2] = new TransitivityBreaker(TestObjectContractBase.TransitivityBreaker.epsilon);
+		return result;
 	}
 
 	/**
@@ -106,8 +103,9 @@ throw new ece351.util.Todo351Exception();
 	@Override
 	Object[] constructHashcodeConsistencyViolators() {
 		final Object[] result = new Object[2];
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
+		result[0] = constructAlwaysTrue();
+		result[1] = constructAlwaysTrue();
+		return result;
 	}
 
 	/**
@@ -116,8 +114,8 @@ throw new ece351.util.Todo351Exception();
 	 */
 	@Override
 	boolean checkNotEqualsNull(final Object obj) {
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
+		if (obj.equals(null)) return false;
+		return true;
 	}
 
 	/**
@@ -126,8 +124,7 @@ throw new ece351.util.Todo351Exception();
 	 */
 	@Override
 	boolean checkEqualsIsReflexive(final Object obj) {
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
+		return obj.equals(obj);
 	}
 
 	/**
@@ -139,8 +136,9 @@ throw new ece351.util.Todo351Exception();
 	 */
 	@Override
 	boolean checkEqualsIsSymmetric(final Object o1, final Object o2) {
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
+		if (o1.equals(o2) && o2.equals(o1)) return true;
+		if (!o1.equals(o2) && !o2.equals(o1)) return true;
+		return false;
 	}
 
 	/**
@@ -152,8 +150,7 @@ throw new ece351.util.Todo351Exception();
 	 */
 	@Override
 	boolean checkEqualsIsTransitive(final Object o1, final Object o2, final Object o3) {
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
+		return (o1.equals(o2) && o1.equals(o3) && o2.equals(o3));
 	}
 
 	/**
@@ -167,7 +164,10 @@ throw new ece351.util.Todo351Exception();
 	 */
 	@Override
 	boolean checkHashcodeIsConsistent(final Object o1, final Object o2) {
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
+		if (o1.equals(o2)) {
+			return o1.hashCode() == o2.hashCode();
+		} else {
+			return o1.hashCode() != o2.hashCode();
+		}
 	}
 }

@@ -29,7 +29,6 @@ package ece351.w.svg;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import ece351.util.Debug;
 import ece351.w.ast.WProgram;
 import ece351.w.ast.Waveform;
 
@@ -74,16 +73,24 @@ public final class TransformW2SVG {
 			// loop on bits
 			for (final String bit : w.bits) {
 				// set the y position according to the value of the bit
+				if (bit == "0") {
+					y_pos = y_mid + y_off;
+				} else {
+					y_pos = y_mid - y_off;
+				}
 				// draw the vertical line
+				out.println(Line.toSVG(x, y_prev, x, y_pos));
 				// draw the horizontal line
+				out.println(Line.toSVG(x, y_pos, x+WIDTH, y_pos));
 				// get ready for the next bit
-// TODO: longer code snippet
-throw new ece351.util.Todo351Exception();
+				x += WIDTH;
+				y_prev = y_pos;
 			}
 			
 			// advance the y position for the next pin
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
+			y_mid += 200;
+			y_prev = y_mid;
+			y_pos = y_mid;
 
 		}
 
