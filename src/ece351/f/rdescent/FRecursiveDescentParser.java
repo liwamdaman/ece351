@@ -89,11 +89,62 @@ public final class FRecursiveDescentParser implements Constants {
         return new AssignmentStatement(var, expr);
     }
     
-    Expr expr() { throw new ece351.util.Todo351Exception(); } // TODO // TODO: replace this stub
-    Expr term() { throw new ece351.util.Todo351Exception(); } // TODO // TODO: replace this stub
-    Expr factor() { throw new ece351.util.Todo351Exception(); } // TODO // TODO: replace this stub
-    VarExpr var() { throw new ece351.util.Todo351Exception(); } // TODO // TODO: replace this stub
-    ConstantExpr constant() { throw new ece351.util.Todo351Exception(); } // TODO // TODO: replace this stub
+    Expr expr() {
+    	Expr expr = term();
+    	while (lexer.inspect("or")) {
+    		lexer.consume("or");
+    		expr = new OrExpr(expr, term());
+    	}
+    	return expr;
+    }
+    
+    Expr term() {
+    	Expr term = factor();
+    	while (lexer.inspect("and")) {
+    		lexer.consume("and");
+    		term = new AndExpr(term, factor());
+    	}
+    	return term;
+    }
+    
+    Expr factor() {
+    	if (lexer.inspect("not")) {
+			lexer.consume("not");
+			return new NotExpr(factor());
+		} else if (lexer.inspect("(")) {
+			lexer.consume("(");
+			Expr expr = expr();
+			lexer.consume(")");
+			return expr;
+		} else if (peekConstant()) {
+			return constant();
+		} else {
+			return var();
+		}
+    }
+    
+    VarExpr var() {
+    	if (lexer.inspectID()) {
+			return new VarExpr(lexer.consumeID());
+		} else {
+			throw new IllegalArgumentException();
+		}
+    }
+    
+    ConstantExpr constant() {
+    	if (peekConstant()) {
+			lexer.consume("'");
+			if (lexer.inspect("0", "1")) {
+				String val = lexer.consume("0", "1");
+				if (peekConstant()) {
+					lexer.consume("'");
+					return ConstantExpr.make(val);
+				}
+			}
+		}
+		
+		throw new IllegalArgumentException();
+    }
 
     // helper functions
     private boolean peekConstant() {

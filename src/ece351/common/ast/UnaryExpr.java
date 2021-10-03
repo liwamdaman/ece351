@@ -76,7 +76,7 @@ public abstract class UnaryExpr extends Expr {
 
 	@Override
 	public final String toString() {
-		return operator() + expr;
+		return operator() + " (" + expr + ")";
 	}
 
 }

@@ -127,9 +127,10 @@ public final class FProgram implements Examinable {
     public String toString() {
 		if (formulas == null || formulas.isEmpty()) return "";
 		final String sep = System.getProperty("line.separator");
-		String prettyPrinted = "";
-		for (AssignmentStatement formula : formulas) {
-			prettyPrinted += formula + sep;
+		String prettyPrinted = formulas.get(0).toString();
+		
+		for (int i = 1; i < formulas.size(); i++) {
+			prettyPrinted += sep + formulas.get(i);
 		}
 		return prettyPrinted;
     }
