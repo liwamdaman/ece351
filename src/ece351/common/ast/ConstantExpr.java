@@ -89,8 +89,7 @@ public final class ConstantExpr extends Expr {
 		final ConstantExpr that = (ConstantExpr) obj;
 
 		// compare field values
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
+		return b == that.b;
 	}
 
 	@Override

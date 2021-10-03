@@ -92,9 +92,8 @@ public final class AssignmentStatement extends Statement implements Examinable {
 		final AssignmentStatement that = (AssignmentStatement) obj;
 		
 		// TODO: compare field values
-		// no significant differences found, return true
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
+		if (!this.outputVar.equals(that.outputVar)) return false;
+		return this.expr.isomorphic(that.expr);
 	}
 
 	/**

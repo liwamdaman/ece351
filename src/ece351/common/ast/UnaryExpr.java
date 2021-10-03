@@ -55,9 +55,8 @@ public abstract class UnaryExpr extends Expr {
 		if (!obj.getClass().equals(this.getClass())) return false;
 		final UnaryExpr that = (UnaryExpr) obj;
 		// compare field values using e.examine(x,y)
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
-    }
+		if (!operator().equals(that.operator())) return false;
+		return e.examine(this.expr, that.expr);}
     
     @Override
     public final int hashCode() {
