@@ -127,8 +127,11 @@ public final class FProgram implements Examinable {
     public String toString() {
 		if (formulas == null || formulas.isEmpty()) return "";
 		final String sep = System.getProperty("line.separator");
-// TODO: longer code snippet
-throw new ece351.util.Todo351Exception();
+		String prettyPrinted = "";
+		for (AssignmentStatement formula : formulas) {
+			prettyPrinted += formula + sep;
+		}
+		return prettyPrinted;
     }
     
 	@Override
