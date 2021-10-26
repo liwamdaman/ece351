@@ -26,6 +26,8 @@
 
 package ece351.common.ast;
 
+import java.util.Arrays;
+
 import ece351.common.visitor.ExprVisitor;
 
 
@@ -46,8 +48,7 @@ public final class OrExpr extends CommutativeBinaryExpr{
 	@Override
 	public Expr simplifyOnce() {
 		// return a new NaryOrExpr with the same children as this OrExpr
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
+		return new NaryOrExpr(Arrays.asList(this.left, this.right));
 	}
 	@Override
 	public String operator() {

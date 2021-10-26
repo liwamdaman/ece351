@@ -14,7 +14,7 @@ lab0 mentor Hari
 lab1 role nobody
 lab2 role nobody
 lab3 role nobody
-lab4 role userid
+lab4 role nobody
 lab5 role userid
 lab6 role userid
 lab7 role userid

@@ -26,6 +26,8 @@
 
 package ece351.common.ast;
 
+import java.util.Arrays;
+
 import ece351.common.visitor.ExprVisitor;
 
 public final class AndExpr extends CommutativeBinaryExpr {
@@ -45,8 +47,7 @@ public final class AndExpr extends CommutativeBinaryExpr {
 	@Override
 	protected Expr simplifyOnce() {
 		// return a new NaryAndExpr with the same children as this AndExpr
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
+		return new NaryAndExpr(Arrays.asList(this.left, this.right));
 	}
 
 	@Override

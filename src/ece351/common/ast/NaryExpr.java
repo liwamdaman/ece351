@@ -183,8 +183,18 @@ public abstract class NaryExpr extends Expr {
 		// supposed to be sorted, but might not be (because repOk might not pass)
 		// if they are not the same elements in the same order return false
 		// no significant differences found, return true
-// TODO: longer code snippet
-throw new ece351.util.Todo351Exception();
+		
+		if (this.children.size() != that.children.size()) {
+			return false;
+		}
+		
+		for (int i = 0; i< this.children.size(); i++) {
+			if (!e.examine(this.children.get(i), that.children.get(i))) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 	
@@ -212,7 +222,11 @@ throw new ece351.util.Todo351Exception();
 		// note: we do not assert repOk() here because the rep might not be ok
 		// the result might contain duplicate children, and the children
 		// might be out of order
-		return this; // TODO: replace this stub
+		NaryExpr result = newNaryExpr(Arrays.asList());
+		for (Expr child: this.children) {
+			result = result.append(child.simplify());
+		}
+		return result;
 	}
 
 	
@@ -222,7 +236,22 @@ throw new ece351.util.Todo351Exception();
 			// use filter to get the other children, which will be kept in the result unchanged
 			// merge in the grandchildren
 			// assert result.repOk():  this operation should always leave the AST in a legal state
-		return this; // TODO: replace this stub
+		
+		NaryExpr filteredSameType = filter(this.getClass(), true);
+		if (filteredSameType.children.isEmpty()) {
+			return this;
+		}
+		
+		NaryExpr result = filter(this.getClass(), false);
+		
+		for (Expr sameTypeChild: filteredSameType.children) {
+			// Assume we can safely cast to NaryExpr since we have filtered children successfully
+			NaryExpr child = (NaryExpr) sameTypeChild;
+			result = result.appendAll(child.children);
+		}		
+		
+		assert result.repOk();
+		return result;
 	}
 
 
@@ -231,8 +260,24 @@ throw new ece351.util.Todo351Exception();
     	// we have multiple children, remove the identity elements
     		// all children were identity elements, so now our working list is empty
     		// return a new list with a single identity element
-    		// normal return
-		return this; // TODO: replace this stub
+    		// normal return    	
+    	
+    	if (this.children.size() == 1) {
+    		return this;
+    	}
+    	
+    	NaryExpr result = newNaryExpr(Arrays.asList());
+    	for (Expr child: this.children) {
+    		if (!this.getIdentityElement().equals(child)) {
+    			result = result.append(child);
+    		}
+		}
+    	
+    	if (result.children.isEmpty()) {
+    		result = result.append(this.getIdentityElement());
+    	}
+    	
+    	return result;
     	// do not assert repOk(): this fold might leave the AST in an illegal state (with only one child)
     }
 
@@ -241,7 +286,15 @@ throw new ece351.util.Todo351Exception();
 			// absorbing element is present: return it
 			// not so fast! what is the return type of this method? why does it have to be that way?
 			// no absorbing element present, do nothing
-		return this; // TODO: replace this stub
+    	
+    	for (Expr child: this.children) {
+    		if (this.getAbsorbingElement().equals(child)) {
+    			NaryExpr result = newNaryExpr(Arrays.asList());
+    			return result.append(this.getAbsorbingElement());
+    		}
+		}
+    	    	
+    	return this;
     	// do not assert repOk(): this fold might leave the AST in an illegal state (with only one child)
 	}
 
@@ -254,7 +307,18 @@ throw new ece351.util.Todo351Exception();
 				// found matching negation and its complement
 				// return absorbing element
 		// no complements to fold
-		return this; // TODO: replace this stub
+
+		NaryExpr result = newNaryExpr(this.children);
+		for (Expr child: result.children) {
+			if (child.getClass() == NotExpr.class) {
+				if (this.contains(((NotExpr)child).expr, Examiner.Equivalent)) {
+					result = result.removeAll(Arrays.asList(child, ((NotExpr)child).expr), Examiner.Equivalent); // Hmmm... isn't it possible that this removes more than just the pair? Do we want this to be possible?
+					result = result.append(getAbsorbingElement());
+				}
+			}
+		}
+		
+		return result;
     	// do not assert repOk(): this fold might leave the AST in an illegal state (with only one child)
 	}
 
@@ -263,22 +327,124 @@ throw new ece351.util.Todo351Exception();
 		// since children are sorted this is fairly easy
 			// no changes
 			// removed some duplicates
-		return this; // TODO: replace this stub
+		
+		if (this.children.size() <= 1) {
+			return this;
+		}
+		
+		NaryExpr result = newNaryExpr(this.children);
+		for (int i = 1; i < this.children.size(); i++) {
+			if (this.children.get(i).equivalent(this.children.get(i-1))) {
+				// Remove both x's, and append one x
+				result = result.removeAll(Arrays.asList(this.children.get(i), this.children.get(i-1)), Examiner.Equals);
+				result = result.append(this.children.get(i));
+			}
+		}
+		
+		return result;
     	// do not assert repOk(): this fold might leave the AST in an illegal state (with only one child)
 	}
 
 	private NaryExpr simpleAbsorption() {
 		// (x.y) + x ... = x ...
 		// check if there are any conjunctions that can be removed
-		return this; // TODO: replace this stub
+		
+		NaryExpr filteredOtherType = filter(getThatClass(), true);
+		if (filteredOtherType.children.isEmpty()) {
+			return this;
+		}
+		
+		NaryExpr result = newNaryExpr(this.children);
+		for (Expr child: this.children) {
+			if (child.getClass() == VarExpr.class) {
+				for (Expr otherTypeChildExpr: filteredOtherType.children) {
+					if (((NaryExpr)otherTypeChildExpr).contains(child, Examiner.Equals)) {
+						result = result.removeAll(Arrays.asList(otherTypeChildExpr), Examiner.Equals);
+					}
+				}
+			}
+		}
+		
+		return result;
     	// do not assert repOk(): this operation might leave the AST in an illegal state (with only one child)
 	}
 
 	private NaryExpr subsetAbsorption() {
 		// check if there are any conjunctions that are supersets of others
 		// e.g., ( a . b . c ) + ( a . b ) = a . b
-		return this; // TODO: replace this stub
+		
+		// From CampusWire thread:
+		/*
+		case 1:
+		(a . b) + (a . b . c) = a . b
+		(a + b) . (a + b + c) = a + b
+		
+		case 2:
+		a . b . ((a . b) + c) = a . b
+		a + b + ((a + b) . c) = a + b
+		*/
+		
+		NaryExpr filteredOtherType = this.filter(getThatClass(), true);
+		if (filteredOtherType.children.isEmpty()) {
+			return this;
+		}
+		
+		NaryExpr result = newNaryExpr(this.children);
+		
+		// Check case 1:
+		for (Expr otherTypeChildExpr1: filteredOtherType.children) {
+			for (Expr otherTypeChildExpr2: filteredOtherType.children) {
+				if (((NaryExpr)otherTypeChildExpr1).containsNaryExprSubset((NaryExpr)otherTypeChildExpr2, Examiner.Equals)) {
+					result = result.removeAll(Arrays.asList(otherTypeChildExpr1), Examiner.Equals);
+				}
+			}
+		}
+		
+		// Refresh filteredOtherType
+		filteredOtherType = result.filter(getThatClass(), true);
+		
+		// Check case 2:
+		for (Expr otherTypeChildExpr: filteredOtherType.children) {
+			for (Expr GrandChildExpr: ((NaryExpr)otherTypeChildExpr).children) {
+				if (GrandChildExpr.getClass() == NaryAndExpr.class || GrandChildExpr.getClass() == NaryOrExpr.class) {
+					// We can assume that this grand child expression is the same AND/OR type as this, or else it would have been merged.
+					
+					// Check if each great grand child of this grand child expression exists as an individual child of this.
+					boolean canBeAbsorbed = true;
+					for (Expr greatGrandChild: ((NaryExpr)GrandChildExpr).children) {
+						if (!this.contains(greatGrandChild, Examiner.Equals)) {
+							canBeAbsorbed = false;
+						}
+					}
+					if (canBeAbsorbed) {
+						result = result.removeAll(Arrays.asList(otherTypeChildExpr), Examiner.Equals);
+						break;
+					}
+				}
+			}
+		}
+		
+		return result;
     	// do not assert repOk(): this operation might leave the AST in an illegal state (with only one child)
+	}
+	
+	private boolean containsNaryExprSubset(final NaryExpr naryExpr, final Examiner examiner) {
+		// Returns true: (a or b or c) contains (a or b)
+		// Returns false: (a or b) contains (a or b)
+		// we can generalize this to NaryExpr subsets, not just binary expression subsets.
+		
+		if (this.equals(naryExpr)) {
+			// For our purposes, not subset if equal
+			return false;
+		}
+		
+		if (!this.getClass().equals(naryExpr.getClass())) return false; // Not sure if this check is needed
+		for (Expr child: naryExpr.children) {
+			if (!this.contains(child, Examiner.Equals)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -288,7 +454,11 @@ throw new ece351.util.Todo351Exception();
 		// if we have only one child, return it
 		// having only one child is an illegal state for an NaryExpr
 			// multiple children; nothing to do; return self
-		return this; // TODO: replace this stub
+		if (this.children.size() == 1) {
+			return this.children.get(0);
+		}
+		
+		return this;
 	}
 
 	/**

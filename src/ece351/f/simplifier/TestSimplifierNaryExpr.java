@@ -62,6 +62,23 @@ public class TestSimplifierNaryExpr extends BaseTest351 {
 		assertTrue(result.repOk());
 		assertEquals(x, result);
 	}
-
+	
+	@Test
+	public void customSubsetAbsorbtionTest1() {
+		final NaryExpr e = new NaryAndExpr(new NaryOrExpr(new VarExpr("a"), new VarExpr("b"), new VarExpr("c")), new NaryOrExpr(new VarExpr("a"), new VarExpr("b")));
+		assertTrue(e.repOk());
+		final Expr result = e.simplify();
+		assertTrue(result.repOk());
+		assertEquals(new NaryOrExpr(new VarExpr("a"), new VarExpr("b")), result);
+	}
+	
+	@Test
+	public void customSubsetAbsorbtionTest2() {
+		final NaryExpr e = new NaryOrExpr(new NaryAndExpr(new VarExpr("a"), new VarExpr("b")), new NaryAndExpr(new VarExpr("a"), new VarExpr("b"), new VarExpr("c")));
+		assertTrue(e.repOk());
+		final Expr result = e.simplify();
+		assertTrue(result.repOk());
+		assertEquals(new NaryAndExpr(new VarExpr("a"), new VarExpr("b")), result);
+	}
 
 }
