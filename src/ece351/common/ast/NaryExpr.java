@@ -412,7 +412,7 @@ public abstract class NaryExpr extends Expr {
 					// Check if each great grand child of this grand child expression exists as an individual child of this.
 					boolean canBeAbsorbed = true;
 					for (Expr greatGrandChild: ((NaryExpr)GrandChildExpr).children) {
-						if (!this.contains(greatGrandChild, Examiner.Equals)) {
+						if (!result.contains(greatGrandChild, Examiner.Equals)) {
 							canBeAbsorbed = false;
 						}
 					}
