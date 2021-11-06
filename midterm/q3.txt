@@ -1,0 +1,6 @@
+3. Assuming we do not have to account for the whitespace every four digits.
+(51 | 52 | 53 | 54 | 55) [0-9]{14}
+M - prefix group group group
+Prefix - (51 | 52 | 53 | 54 | 55) digit digit
+group - digit digit digit digit
+digit - 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
