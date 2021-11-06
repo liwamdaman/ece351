@@ -73,24 +73,40 @@ public /*final*/ class WParboiledParser extends BaseParser351 {
 	 */
 	@Override
     public Rule Program() {
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
+		return Sequence(
+				push(new WProgram()),
+				OneOrMore(Sequence(Waveform(), W0())),
+				EOI,
+				checkType(peek(), WProgram.class)
+				//debugmsg(peek())
+				);
     }
 
 	/**
 	 * Each line of the input W file represents a "pin" in the circuit.
 	 */
     public Rule Waveform() {
-// TODO: longer code snippet
-throw new ece351.util.Todo351Exception();
+    	return Sequence(
+    			push(new Waveform()),
+    			Sequence(Name(), W0(), Ch(':'), W0(), BitString(), W0(), Ch(';')),
+    			checkType(peek(), Waveform.class),
+    			//debugmsg(peek()),
+    			swap(),
+    			checkType(peek(), WProgram.class),
+    			push(((WProgram)pop()).append((Waveform)pop()))
+    			);
     }
 
     /**
      * The first token on each line is the name of the pin that line represents.
      */
     public Rule Name() {
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
+    	return Sequence(
+    			OneOrMore(Letter()),
+    			//debugmsg(match()),
+    			checkType(peek(), Waveform.class),
+    			push(((Waveform)pop()).rename(match()))
+    			);
     }
     
     /**
@@ -98,25 +114,30 @@ throw new ece351.util.Todo351Exception();
      * Recall that PEGs incorporate lexing into the parser.
      */
     public Rule Letter() {
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
+    	return Sequence(
+    			FirstOf(CharRange('a', 'z'), CharRange('A', 'Z'), CharRange('0', '9'), Ch('_')),
+    			checkType(match(), String.class)
+    			);
     }
 
     /**
      * A BitString is the sequence of values for a pin.
      */
     public Rule BitString() {
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
+    	return OneOrMore(Sequence(Bit(), W0()));
     }
     
     /**
      * A BitString is composed of a sequence of Bits. 
      * Recall that PEGs incorporate lexing into the parser.
      */
-    public Rule Bit() {   
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
+    public Rule Bit() {
+    	return Sequence(
+    			AnyOf("01"),
+    			checkType(match(), String.class),
+    			checkType(peek(), Waveform.class),
+    			push(((Waveform)pop()).append(match()))
+    			);
     }
 
 }
