@@ -10,7 +10,7 @@ lab1 2
 lab2 3
 lab3 4.5
 lab4 9
-lab5 0
+lab5 3.5
 lab6 0
 lab7 0
 lab8 0
