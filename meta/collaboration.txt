@@ -16,7 +16,7 @@ lab2 role nobody
 lab3 role nobody
 lab4 role nobody
 lab5 role nobody
-lab6 role userid
+lab6 role nobody
 lab7 role userid
 lab8 role userid
 lab9 role userid

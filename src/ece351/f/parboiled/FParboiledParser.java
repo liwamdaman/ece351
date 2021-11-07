@@ -29,6 +29,7 @@ package ece351.f.parboiled;
 import java.lang.invoke.MethodHandles;
 
 import org.parboiled.Rule;
+import org.parboiled.support.Var;
 
 import ece351.common.ast.AndExpr;
 import ece351.common.ast.AssignmentStatement;
@@ -87,7 +88,81 @@ public /*final*/ class FParboiledParser extends FBase implements Constants {
 
 	@Override
 	public Rule Program() {
-// TODO: longer code snippet
-throw new ece351.util.Todo351Exception();
+		return Sequence(
+				push(new FProgram()),
+				OneOrMore(
+						Sequence(
+								Sequence(Formula(), W0()),
+								swap(),
+								push(((FProgram)pop()).append(pop()))
+								)
+						),
+				EOI,
+				checkType(peek(), FProgram.class)
+				);
+	}
+	
+	public Rule Formula() {
+		Var<Expr> expr = new Var<Expr>();
+		return Sequence(
+				Sequence(Var(), W0(), Ch('<'), Ch('='), W0(), Expr(), W0(), Ch(';')),
+				expr.set((Expr)pop()),
+				push(new AssignmentStatement((VarExpr)pop(), expr.get()))
+				);
+	}
+	
+	public Rule Expr() {
+		return Sequence(
+				Term(),
+				ZeroOrMore(
+						Sequence(
+								Sequence(W0(), OR(), W0(), Term(), W0()),
+								swap(),
+								push(new OrExpr(pop(), pop()))
+								)
+						)
+				);
+	}
+	
+	public Rule Term() {
+		return Sequence(
+				Factor(),
+				ZeroOrMore(
+						Sequence(
+								Sequence(W0(), AND(), W0(), Factor(), W0()),
+								swap(),
+								push(new AndExpr(pop(), pop()))
+								)
+						)
+				);
+	}
+	
+	public Rule Factor() {
+		return FirstOf(
+				Sequence(
+						Sequence(NOT(), W0(), Factor()),
+						push(new NotExpr((Expr)pop()))
+						),
+				Sequence(Ch('('), W0(), Expr(), W0(), Ch(')')),
+				Var(),
+				Constant()
+				);
+	}
+	
+	public Rule Constant() {
+		return Sequence(
+				Ch('\''),
+				FirstOf("0 ", "1 "),
+				push(ConstantExpr.make(match())),
+				Ch('\'')
+				);
+	}
+	
+	public Rule Var() {
+		return Sequence(
+				TestNot(Keyword()),
+				OneOrMore(Char()),
+				push(new VarExpr(match()))
+				);
 	}
 }
