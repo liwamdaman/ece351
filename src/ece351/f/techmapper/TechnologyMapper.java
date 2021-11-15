@@ -27,7 +27,9 @@
 package ece351.f.techmapper;
 
 import java.io.PrintWriter;
+import java.util.HashSet;
 import java.util.IdentityHashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.SortedSet;
@@ -123,17 +125,78 @@ public final class TechnologyMapper extends PostOrderExprVisitor {
 		header(out);
 		
 		// build a set of all of the exprs in the program
+		IdentityHashSet<Expr> allExprs = ExtractAllExprs.allExprs(program);
+		
 		// build substitutions by determining equivalences of exprs
+		for (Iterator<Expr> it = allExprs.iterator(); it.hasNext();) {
+			Expr expr = it.next();
+			// Remove expr from set and use this expr as the representative for its equivalence class
+			it.remove();
+			substitutions.put(expr, expr);
+			
+			// Discover the equivalence class
+			for (Iterator<Expr> it2 = allExprs.iterator(); it2.hasNext();) {
+				Expr expr2 = it2.next();
+				if (examiner.examine(expr, expr2)) {
+					it2.remove();
+					substitutions.put(expr2, expr);
+				}
+			}
+		}
+		
+//		for (Expr expr : allExprs) {			
+//			// Remove expr from set and use this expr as the representative for its equivalence class
+//			allExprs.remove(expr);
+//			substitutions.put(expr, expr);
+//			
+//			// Discover the equivalence class
+//			for (Expr expr2 : allExprs) {
+//				if (examiner.examine(expr, expr2)) {
+//					allExprs.remove(expr2);
+//					substitutions.put(expr2, expr);
+//				}
+//			}
+//		}
+		
 		// create nodes for output vars
+		for (AssignmentStatement stmt : program.formulas) {
+			node(stmt.outputVar.serialNumber(), stmt.outputVar.identifier);
+		}
+		
 		// attach images to gates
 		// ../../gates/not_noleads.png
 		// ../../gates/or_noleads.png
 		// ../../gates/and_noleads.png
+		Set<Expr> equivalenceClassRepresentatives = new HashSet<Expr>();
+		for (Expr expr : substitutions.values()) {
+			equivalenceClassRepresentatives.add(expr);
+		}
+		for (Expr expr : equivalenceClassRepresentatives) {
+			if (expr instanceof NotExpr) {
+				node(expr.serialNumber(), expr.serialNumber(), "../../gates/not_noleads.png");
+			} else if (expr instanceof OrExpr || expr instanceof NaryOrExpr) {
+				node(expr.serialNumber(), expr.serialNumber(), "../../gates/or_noleads.png");
+			} else if (expr instanceof AndExpr || expr instanceof NaryAndExpr) {
+				node(expr.serialNumber(), expr.serialNumber(), "../../gates/and_noleads.png");
+			}
+		}
+		
 		// compute edges
+		for (AssignmentStatement stmt : program.formulas) {
+			traverseExpr(stmt.expr);
+			edge(stmt.expr, stmt.outputVar);
+		}		
+		
 		// print nodes
+		for (String node : nodes) {
+			out.println(node);
+		}
+		
 		// print edges
-// TODO: longer code snippet
-throw new ece351.util.Todo351Exception();
+		for (String edge : edges) {
+			out.println(edge);
+		}
+		
 		// print footer
 		footer(out);
 		out.flush();
@@ -187,28 +250,30 @@ throw new ece351.util.Todo351Exception();
 
 	@Override
 	public Expr visitAnd(final AndExpr e) {
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
-		// return e;
+		edge(e.left, e);
+		edge(e.right, e);
+		return e;
 	}
 
 	@Override
 	public Expr visitOr(final OrExpr e) {
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
-		// return e;
+		edge(e.left, e);
+		edge(e.right, e);
+		return e;
 	}
 	
 	@Override public Expr visitNaryAnd(final NaryAndExpr e) {
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
-		// return e;
+		for (Expr child : e.children) {
+			edge(child, e);
+		}
+		return e;
 	}
 
-	@Override public Expr visitNaryOr(final NaryOrExpr e) { 
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
-		// return e;
+	@Override public Expr visitNaryOr(final NaryOrExpr e) {
+		for (Expr child : e.children) {
+			edge(child, e);
+		}
+		return e;
 	}
 
 
