@@ -13,6 +13,6 @@ lab4 9
 lab5 3.5
 lab6 3.5
 lab7 5.5
-lab8 0
+lab8 2.5
 lab9 0
 lab10 0
