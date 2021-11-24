@@ -1,0 +1,54 @@
+
+Begin program: 
+
+Entity/Architecture pair: full_adder
+
+entity full_adder is
+	Input Pins: [A, B, Cin]
+	Output Pins: [S, Cout]
+end full_adder
+
+architecture full_adder_arch of full_adder is
+	Signals: []
+begin
+	Components: []
+	List of Statements: [
+			S <= ( ( A xor B ) xor Cin ), 
+			Cout <= ( ( ( A xor B ) and Cin ) or ( A and B ) )]
+end full_adder_arch
+
+Entity/Architecture pair: half_adder
+
+entity half_adder is
+	Input Pins: [A, B]
+	Output Pins: [S, C]
+end half_adder
+
+architecture half_adder_arch of half_adder is
+	Signals: []
+begin
+	Components: []
+	List of Statements: [
+			S <= ( not ( ( A or B ) ) ), 
+			C <= ( A and B )]
+end half_adder_arch
+
+Entity/Architecture pair: four_bit_ripple_carry_adder
+entity four_bit_ripple_carry_adder is
+	Input Pins: [a0, b0, a1, b1, a2, b2, a3, b3, Cin]
+	Output Pins: [sum0, sum1, sum2, sum3, Cout, V]
+end four_bit_ripple_carry_adder
+architecture fouradder_structure of four_bit_ripple_carry_adder is
+	Signals: [c0, c1, c2, c3, c4]
+begin
+	Components: [
+	FA0 : entity work.full_adder port map( [a0, b0, Cin, sum0, c1] ), 
+	FA1 : entity work.full_adder port map( [a1, b1, c1, sum1, c2] ), 
+	FA2 : entity work.full_adder port map( [a2, b2, c2, sum2, c3] ), 
+	FA3 : entity work.full_adder port map( [a3, b3, c3, sum3, c4] )]
+	List of Statements: [
+			V <= ( c3 xor c4 ), 
+			Cout <= c4]
+end fouradder_structure
+
+

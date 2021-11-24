@@ -1,0 +1,16 @@
+
+Begin program: 
+Entity/Architecture pair: OR_gate_2
+entity OR_gate_2 is
+	Input Pins: [x, y]
+	Output Pins: [F]
+end OR_gate_2
+architecture OR_gate_arch of OR_gate_2 is
+	Signals: []
+begin
+	Components: []
+	List of Statements: [
+			F <= ( x or y )]
+end OR_gate_arch
+
+

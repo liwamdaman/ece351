@@ -1,0 +1,17 @@
+
+Begin program: 
+Entity/Architecture pair: full_adder
+entity full_adder is
+	Input Pins: [A, B, Cin]
+	Output Pins: [S, Cout]
+end full_adder
+architecture full_adder_arch of full_adder is
+	Signals: []
+begin
+	Components: []
+	List of Statements: [
+			S <= ( ( A xor B ) xor Cin ), 
+			Cout <= ( ( ( A xor B ) and Cin ) or ( A and B ) )]
+end full_adder_arch
+
+

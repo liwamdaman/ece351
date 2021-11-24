@@ -1,0 +1,19 @@
+condition1 <= ( ( not ( ( OR_gatex and ( not '0' ) ) or ( ( not OR_gatex ) and '0' ) ) ) and ( not ( ( OR_gatey and ( not '0' ) ) or ( ( not OR_gatey ) and '0' ) ) ) );
+OR_gatez <= ( condition1 and ( '0' ) ) or ( ( not condition1 ) and ( '1' ) );
+four_port_OR_gateresult <= ( four_port_OR_gatee or four_port_OR_gatef );
+condition2 <= ( ( not ( ( four_port_OR_gatea and ( not '0' ) ) or ( ( not four_port_OR_gatea ) and '0' ) ) ) and ( not ( ( four_port_OR_gateb and ( not '0' ) ) or ( ( not four_port_OR_gateb ) and '0' ) ) ) );
+four_port_OR_gatee <= ( condition2 and ( '0' ) ) or ( ( not condition2 ) and ( '1' ) );
+condition3 <= ( ( not ( ( four_port_OR_gatec and ( not '0' ) ) or ( ( not four_port_OR_gatec ) and '0' ) ) ) and ( not ( ( four_port_OR_gated and ( not '0' ) ) or ( ( not four_port_OR_gated ) and '0' ) ) ) );
+four_port_OR_gatef <= ( condition3 and ( '0' ) ) or ( ( not condition3 ) and ( '1' ) );
+eight_port_OR_gatey <= ( eight_port_OR_gateresult1 or eight_port_OR_gateresult2 );
+eight_port_OR_gateresult1 <= ( eight_port_OR_gatecomp3_e or eight_port_OR_gatecomp3_f );
+condition4 <= ( ( not ( ( eight_port_OR_gatex0 and ( not '0' ) ) or ( ( not eight_port_OR_gatex0 ) and '0' ) ) ) and ( not ( ( eight_port_OR_gatex1 and ( not '0' ) ) or ( ( not eight_port_OR_gatex1 ) and '0' ) ) ) );
+eight_port_OR_gatecomp3_e <= ( condition4 and ( '0' ) ) or ( ( not condition4 ) and ( '1' ) );
+condition5 <= ( ( not ( ( eight_port_OR_gatex2 and ( not '0' ) ) or ( ( not eight_port_OR_gatex2 ) and '0' ) ) ) and ( not ( ( eight_port_OR_gatex3 and ( not '0' ) ) or ( ( not eight_port_OR_gatex3 ) and '0' ) ) ) );
+eight_port_OR_gatecomp3_f <= ( condition5 and ( '0' ) ) or ( ( not condition5 ) and ( '1' ) );
+eight_port_OR_gateresult2 <= ( eight_port_OR_gatecomp4_e or eight_port_OR_gatecomp4_f );
+condition6 <= ( ( not ( ( eight_port_OR_gatex4 and ( not '0' ) ) or ( ( not eight_port_OR_gatex4 ) and '0' ) ) ) and ( not ( ( eight_port_OR_gatex5 and ( not '0' ) ) or ( ( not eight_port_OR_gatex5 ) and '0' ) ) ) );
+eight_port_OR_gatecomp4_e <= ( condition6 and ( '0' ) ) or ( ( not condition6 ) and ( '1' ) );
+condition7 <= ( ( not ( ( eight_port_OR_gatex6 and ( not '0' ) ) or ( ( not eight_port_OR_gatex6 ) and '0' ) ) ) and ( not ( ( eight_port_OR_gatex7 and ( not '0' ) ) or ( ( not eight_port_OR_gatex7 ) and '0' ) ) ) );
+eight_port_OR_gatecomp4_f <= ( condition7 and ( '0' ) ) or ( ( not condition7 ) and ( '1' ) );
+
