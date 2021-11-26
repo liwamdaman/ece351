@@ -1,0 +1,46 @@
+
+Begin program: 
+Entity/Architecture pair: OR_gate_2
+entity OR_gate_2 is
+	Input Pins: [x, y]
+	Output Pins: [F]
+end OR_gate_2
+architecture OR_gate_arch of OR_gate_2 is
+	Signals: []
+begin
+	Components: []
+	List of Statements: [
+			F <= ( x or y )]
+end OR_gate_arch
+
+Entity/Architecture pair: four_port_OR_gate_2
+entity four_port_OR_gate_2 is
+	Input Pins: [a, b, c, d]
+	Output Pins: [result]
+end four_port_OR_gate_2
+architecture four_port_structure of four_port_OR_gate_2 is
+	Signals: [e, f]
+begin
+	Components: [
+	OR1 : entity work.OR_gate_2 port map( [a, b, e] ), 
+	OR2 : entity work.OR_gate_2 port map( [c, d, f] )]
+	List of Statements: [
+			result <= ( e or f )]
+end four_port_structure
+
+Entity/Architecture pair: eight_port_OR_gate_2
+entity eight_port_OR_gate_2 is
+	Input Pins: [x0, x1, x2, x3, x4, x5, x6, x7]
+	Output Pins: [y]
+end eight_port_OR_gate_2
+architecture eight_port_structure of eight_port_OR_gate_2 is
+	Signals: [result1, result2]
+begin
+	Components: [
+	OR1 : entity work.four_port_OR_gate_2 port map( [x0, x1, x2, x3, result1] ), 
+	OR2 : entity work.four_port_OR_gate_2 port map( [x4, x5, x6, x7, result2] )]
+	List of Statements: [
+			y <= ( result1 or result2 )]
+end eight_port_structure
+
+

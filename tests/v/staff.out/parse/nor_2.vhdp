@@ -1,0 +1,16 @@
+
+Begin program: 
+Entity/Architecture pair: NOR_gate
+entity NOR_gate is
+	Input Pins: [x, y]
+	Output Pins: [F]
+end NOR_gate
+architecture NOR_gate_arch of NOR_gate is
+	Signals: []
+begin
+	Components: []
+	List of Statements: [
+			F <= ( x nor y )]
+end NOR_gate_arch
+
+

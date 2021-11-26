@@ -1,0 +1,5 @@
+Parse errors:
+Invalid input 's', expected ' ', '\t', '\f', '\r', '\n', WhiteSpace or BIT (line 2, pos 8):
+	x: in std_logic;
+       ^
+

@@ -1,0 +1,50 @@
+digraph g {
+    // header
+    rankdir=LR;
+    margin=0.01;
+    node [shape="plaintext"];
+    edge [arrowhead="diamond"];
+    // circuit 
+    and148 [label="and148", image="gates/and_noleads.png"];
+    and160 [label="and160", image="gates/and_noleads.png"];
+    and190 [label="and190", image="gates/and_noleads.png"];
+    and226 [label="and226", image="gates/and_noleads.png"];
+    and245 [label="and245", image="gates/and_noleads.png"];
+    and255 [label="and255", image="gates/and_noleads.png"];
+    not144 [label="not144", image="gates/not_noleads.png"];
+    not186 [label="not186", image="gates/not_noleads.png"];
+    not222 [label="not222", image="gates/not_noleads.png"];
+    not55 [label="not55", image="gates/not_noleads.png"];
+    or201 [label="or201", image="gates/or_noleads.png"];
+    or235 [label="or235", image="gates/or_noleads.png"];
+    or263 [label="or263", image="gates/or_noleads.png"];
+    var37[label="full_adderS"];
+    var39[label="full_adderB"];
+    var54[label="full_adderA"];
+    var63[label="full_adderCout"];
+    var73[label="full_adderCin"];
+    var54 -> not55 ;
+    not55 -> and160 ;
+    var39 -> and160 ;
+    var39 -> not222 ;
+    not222 -> and226 ;
+    var54 -> and226 ;
+    and160 -> or235 ;
+    and226 -> or235 ;
+    or235 -> and245 ;
+    var73 -> and245 ;
+    var54 -> and255 ;
+    var39 -> and255 ;
+    and245 -> or263 ;
+    and255 -> or263 ;
+    or263 -> var63 ;
+    or235 -> not144 ;
+    not144 -> and148 ;
+    var73 -> and148 ;
+    var73 -> not186 ;
+    or235 -> and190 ;
+    not186 -> and190 ;
+    and148 -> or201 ;
+    and190 -> or201 ;
+    or201 -> var37 ;
+}

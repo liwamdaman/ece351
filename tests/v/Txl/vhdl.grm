@@ -1,0 +1,327 @@
+keys
+	abs access across after alias 'all and architecture array assert attribute begin block body break buffer bus case component configuration constant disconnect downto 'end entity
+end keys
+
+keys
+	else elsif exit file for function generate generic group guarded if impure in inertial inout is label library limit linkage literal loop map mod nand nature new next noise nor 'not null
+end keys
+
+keys
+	of on open or others out package port postponed process procedure procedural pure quantity range reject rem record reference register report return rol ror select severity shared 
+end keys
+
+keys
+	signal sla sll spectrum sra srl subnature subtype terminal then through to tolerance transport type unaffected units until use variable wait with when while xnor xor
+end keys
+
+comments
+	--
+end comments
+
+compounds
+	<=
+end compounds
+
+define adding_operator
+		'+
+	|	'-
+	|	'&
+end define
+
+define aggregate
+	'( [list element_association+] ')
+end define
+
+define architecture_body
+	architecture [id] of [name] is [repeat variable_declaration] 'begin [NL] [repeat architecture_statement] 'end [opt architecture] [opt id] ';
+end define
+
+define architecture
+	'architecture
+end define
+
+define architecture_statement
+		[process_statement]
+	|	[concurrent_signal_assignment_statement]
+end define
+
+define concurrent_signal_assignment_statement
+	[opt label_colon] [opt postponed] [conditional_signal_assignment]
+end define
+
+define postponed
+	'postponed
+end define
+
+define condition
+	[expression]
+end define
+
+%The [repeat conditional_signal_assignment] is needed for three address form convertion
+define conditional_signal_assignment
+		[target] '<= [conditional_waveforms] '; [NL]
+	|	[repeat conditional_signal_assignment]
+end define
+
+define conditional_waveforms
+	[waveform]
+end define
+
+define program
+		[repeat library] [repeat use] [repeat design_unit]
+	|	[id]
+end define
+
+define library
+	'library [id] ';
+end define
+
+define use
+	'use [id] [repeat dotId] ';
+end define
+
+define dotId
+		'. [id]
+	|	'. [key]
+end define
+
+define design_unit
+		[architecture_body]
+	|	[entity_declaration]
+end define
+
+define element_association
+		[expression]
+end define
+
+define elseif_statements
+		elsif [condition] then [sequence_of_statements]
+end define
+
+define entity_declaration
+		entity [id] is [opt port_clause] [repeat variable_declaration] [opt begin_process_statement] 'end [repeat entity] [opt id] ; [NL] [NL]
+end define
+
+define begin_process_statement
+		begin [repeat process_statement]
+end define
+
+define entity 
+		'entity
+end define
+
+define expression_tester
+		[expression]
+end define
+
+define expression
+		[relation] [opt logical_operator_relation]
+end define
+
+define logical_operator_relation
+		[logical_operator] [relation]
+end define
+
+define factor
+		[literal]
+	|	[unary_operator] [literal]
+end define
+
+define identifier_list
+	[list id+]
+end define
+
+define if_statement
+		[opt label_colon] if [condition] then [sequence_of_statements] [repeat elseif_statements] [opt else_sequence_of_statements] 'end if [opt id] ;
+end define
+
+define else_sequence_of_statements
+		else [sequence_of_statements]
+end define
+
+define interface_variable_declaration
+		[opt variable] [identifier_list] : [opt mode] [name] [opt name] [opt varasgn_expression]
+end define
+
+define varasgn_expression
+		':'= [expression]
+end define
+
+define variable
+		'variable
+end define
+
+define label_colon
+		[id] :
+end define
+
+define literal
+		[id]
+	|	[stringlit]
+	|	[number]
+	|	[charlit]
+	|	'([expression]')
+end define
+
+define logical_operator
+		and
+	|	or
+	|	nand
+	|	nor
+	|	xor
+	|	xnor
+end define
+
+define mode
+		in
+	|	out
+	|	inout
+	|	buffer 
+	|	linkage
+end define
+
+define multiplying_operator
+		'*
+	|	'/
+	|	mod
+	|	rem
+end define
+
+define name
+		[id]
+%	|	[stringlit]
+end define
+
+define port_clause
+	port '( [NL] [interface_variable_declaration] [repeat semi_interface_variable_declaration] [NL] ') ; [NL]
+end define
+
+define semi_interface_variable_declaration
+		'; [NL] [interface_variable_declaration]
+end define
+
+define process_statement
+		[opt label_colon] [opt postponed] process [opt LP_sensitivity_list_RP] [opt is] [repeat variable_declaration] begin [repeat sequential_statement] 'end [opt postponed] process [opt id] ';
+end define
+
+define LP_sensitivity_list_RP
+	'( [sensitivity_list] ')
+end define
+
+define is
+		'is
+end define
+
+define relation
+		[shift_expression] [opt relational_operator_shift_expression]
+end define
+
+define relational_operator_shift_expression
+		[relational_operator] [shift_expression]
+end define
+
+define relational_operator
+		'=
+	|	'/'=
+	|	'<'=
+	|	'<
+	|	'>'=
+	|	'>
+end define
+
+define sensitivity_list
+		[list name]
+end define
+
+define sequence_of_statements
+		[repeat sequential_statement]
+end define
+
+define sequential_statement
+		[if_statement]
+	|	[signal_assignment_statement]
+end define
+
+define shift_expression
+		[simple_expression] [opt shift_operator_simple_expression]
+end define
+
+define shift_operator_simple_expression
+		[shift_operator] [simple_expression]
+end define
+
+define shift_operator
+		sll
+	|	srl
+	|	sla
+	|	sra
+	|	rol
+	|	ror
+end define
+
+define suffix
+		[id]
+	|	[charlit]
+	|	[stringlit]
+	|	'all
+end define
+
+define target
+		[name]
+	|	[aggregate]
+end define
+
+define simple_expression
+		[term] [repeat adding_operator_term]
+end define
+
+define adding_operator_term
+		[adding_operator] [term]
+end define
+
+define signature
+		'[[opt lt_name] [opt return_name] ']
+end define
+
+define lt_name
+		[list name]
+end define
+
+define return_name
+		return [name]
+end define
+
+define signal_assignment_statement
+		[opt label_colon] [target] '<'= [waveform] ';
+end define
+
+define term
+		[factor] [repeat multiplying_operator_factor]
+end define
+
+define multiplying_operator_factor
+		[multiplying_operator] [factor]
+end define
+
+define unary_operator
+		abs
+	|	'not
+end define
+
+define variable_declaration
+		[opt shared] 'variable [identifier_list] ': [name] [opt name] [opt varasgn_expression] ';
+end define
+
+define shared
+		'shared
+end define
+
+define waveform
+		[list waveform_element+]
+	|	'unaffected
+end define
+
+define waveform_element
+		[expression]
+end define
+

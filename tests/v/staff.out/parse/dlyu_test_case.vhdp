@@ -1,0 +1,45 @@
+
+Begin program: 
+Entity/Architecture pair: DanWuzHere
+entity DanWuzHere is
+	Input Pins: [I11, I10, I9, I8, I7, I6, I5, I4, I3, I2, I1, I0, S, T]
+	Output Pins: [O0, O1, O2, O3, O4, O5]
+end DanWuzHere
+architecture behv1 of DanWuzHere is
+	Signals: []
+begin
+	Components: []
+	List of Statements: [
+	process ( [I5, I4, I3, I2, I1, I0, S, T] ) 
+	begin
+	[
+		if ( ( S=0 and T=1 ) ) then
+			[
+			O0 <= I0, 
+			O1 <= I2, 
+			O2 <= I4]
+		else 
+			[
+			O0 <= I1, 
+			O2 <= I5, 
+			O1 <= I3]
+		end if]
+	end process, 
+	process ( [I11, I10, I9, I8, I7, I6, S, T] ) 
+	begin
+	[
+		if ( ( S=1 and T=1 ) ) then
+			[
+			O3 <= I6, 
+			O4 <= I8, 
+			O5 <= I10]
+		else 
+			[
+			O3 <= I7, 
+			O4 <= I9, 
+			O5 <= I11]
+		end if]
+	end process]
+end behv1
+
+

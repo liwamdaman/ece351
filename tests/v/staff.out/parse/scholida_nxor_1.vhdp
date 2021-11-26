@@ -1,0 +1,21 @@
+
+Begin program: 
+Entity/Architecture pair: XNOR_test
+entity XNOR_test is
+	Input Pins: [a, b, x, y]
+	Output Pins: [F, Z]
+end XNOR_test
+architecture XNOR_test_arch of XNOR_test is
+	Signals: []
+begin
+	Components: []
+	List of Statements: [
+	process ( [a, b, x, y] ) 
+	begin
+	[
+			F <= ( x xnor y ), 
+			Z <= ( ( x and y ) xnor ( a xnor b ) )]
+	end process]
+end XNOR_test_arch
+
+
