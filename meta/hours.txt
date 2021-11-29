@@ -16,3 +16,4 @@ lab7 5.5
 lab8 2.5
 lab9 0
 lab10 0
+lab11 6.5

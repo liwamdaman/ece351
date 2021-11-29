@@ -26,9 +26,9 @@
 
 package ece351.v;
 
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.parboiled.common.ImmutableList;
 
@@ -87,54 +87,119 @@ public final class Elaborator extends PostOrderExprVisitor {
 		// we need to construct a new AST that will be the return value.
 		// it will be like the input (root), but different.
 		VProgram result = new VProgram();
-		int compCount = 0;
+		int compCount = 1;
 
 		// iterate over all of the designUnits in root.
-		// for each one, construct a new architecture.
-		// Architecture a = du.arch.varyComponents(ImmutableList.<Component>of());
-		// this gives us a copy of the architecture with an empty list of components.
-		// now we can build up this Architecture with new components.
+		for (DesignUnit designUnit : root.designUnits) {
+			// for each one, construct a new architecture.
+			Architecture arch = designUnit.arch.varyComponents(ImmutableList.<Component>of());
+			// this gives us a copy of the architecture with an empty list of components.
+			
+			// now we can build up this Architecture with new components.
 			// In the elaborator, an architectures list of signals, and set of statements may change (grow)
-						//populate dictionary/map	
-						//add input signals, map to ports
-						//add output signals, map to ports
-						//add local signals, add to signal list of current designUnit						
-						//loop through the statements in the architecture body		
-							// make the appropriate variable substitutions for signal assignment statements
-							// i.e., call changeStatementVars
-							// make the appropriate variable substitutions for processes (sensitivity list, if/else body statements)
-							// i.e., call expandProcessComponent
-			 // append this new architecture to result
-// TODO: longer code snippet
-throw new ece351.util.Todo351Exception();
+			for (Component component : designUnit.arch.components) {
+				// Assuming related design unit / entity already exists, find it
+				DesignUnit relatedDesignUnit = result.designUnits.stream()
+						.filter(du -> du.entity.identifier.equals(component.entityName))
+						.collect(Collectors.toList())
+						.get(0);
+				
+				//populate dictionary/map
+				int signalIndex = 0;
+				//add input signals, map to ports
+				for (String input : relatedDesignUnit.entity.input) {
+					current_map.put(input, component.signalList.get(signalIndex));
+					signalIndex++;
+				}
+				//add output signals, map to ports
+				for (String output : relatedDesignUnit.entity.output) {
+					current_map.put(output, component.signalList.get(signalIndex));
+					signalIndex++;
+				}				
+				//add local signals, add to signal list of current designUnit
+				for (String signal : relatedDesignUnit.arch.signals) {
+					String prefixedSignal = "comp" + compCount + "_" + signal;
+					current_map.put(signal, prefixedSignal);
+					arch = arch.appendSignal(prefixedSignal);
+				}
+				
+				//loop through the statements in the architecture body
+				for (Statement statement : relatedDesignUnit.arch.statements) {
+					Statement substitutedStatement = statement;
+					
+					// make the appropriate variable substitutions for signal assignment statements
+					// i.e., call changeStatementVars
+					if (substitutedStatement.getClass() == AssignmentStatement.class) {
+						substitutedStatement = changeStatementVars((AssignmentStatement)substitutedStatement);
+					}
+					
+					// make the appropriate variable substitutions for processes (sensitivity list, if/else body statements)
+					// i.e., call expandProcessComponent
+					else if (substitutedStatement.getClass() == Process.class) {
+						substitutedStatement = expandProcessComponent((Process)substitutedStatement);
+					}
+					
+					arch = arch.appendStatement(substitutedStatement);
+				}
+				
+				// increase compCount, clear current_map
+				compCount++;
+				current_map.clear();
+			}
+			
+			// append this new architecture to result
+			result = result.append(new DesignUnit(arch, designUnit.entity));
+		}
+		
 		assert result.repOk();
 		return result;
 	}
 	
 	// you do not have to use these helper methods; we found them useful though
 	private Process expandProcessComponent(final Process process) {
-// TODO: longer code snippet
-throw new ece351.util.Todo351Exception();
+		ImmutableList<String> sensitivityList = ImmutableList.of();
+		for (String input : process.sensitivityList) {
+			sensitivityList = sensitivityList.append(current_map.get(input));
+		}
+		
+		ImmutableList<Statement> sequentialStatements = ImmutableList.of();
+		for (Statement statement : process.sequentialStatements) {
+			if (statement.getClass() == AssignmentStatement.class) {
+				sequentialStatements = sequentialStatements.append(changeStatementVars((AssignmentStatement)statement));
+			} else if (statement.getClass() == IfElseStatement.class) {
+				sequentialStatements = sequentialStatements.append(changeIfVars((IfElseStatement)statement));
+			} else if (statement.getClass() == Process.class) {
+				sequentialStatements = sequentialStatements.append(expandProcessComponent((Process)statement));
+			}
+			// Should be no other options
+		}
+		return new Process(sequentialStatements, sensitivityList);
 	}
 	
 	// you do not have to use these helper methods; we found them useful though
 	private  IfElseStatement changeIfVars(final IfElseStatement s) {
-// TODO: longer code snippet
-throw new ece351.util.Todo351Exception();
+		Expr condition = traverseExpr(s.condition);
+		ImmutableList<AssignmentStatement> ifBody = ImmutableList.of();
+		for (AssignmentStatement stmt : s.ifBody) {
+			ifBody = ifBody.append(changeStatementVars(stmt));
+		}
+		ImmutableList<AssignmentStatement> elseBody = ImmutableList.of();
+		for (AssignmentStatement stmt : s.elseBody) {
+			elseBody = elseBody.append(changeStatementVars(stmt));
+		}
+		return new IfElseStatement(elseBody, ifBody, condition);
 	}
 
 	// you do not have to use these helper methods; we found them useful though
 	private AssignmentStatement changeStatementVars(final AssignmentStatement s){
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
+		return new AssignmentStatement(current_map.get(s.outputVar.identifier), traverseExpr(s.expr));
 	}
 	
 	
 	@Override
 	public Expr visitVar(VarExpr e) {
-		// TODO replace/substitute the variable found in the map
-// TODO: short code snippet
-throw new ece351.util.Todo351Exception();
+		// replace/substitute the variable found in the map
+		return new VarExpr(current_map.get(e.identifier));
 	}
 	
 	// do not rewrite these parts of the AST
