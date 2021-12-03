@@ -83,9 +83,33 @@ public final class Synthesizer extends PostOrderExprVisitor {
 		
 	private FProgram synthesizeit(final VProgram root) {	
 		FProgram result = new FProgram();
+		for (DesignUnit designUnit : root.designUnits) {
 			// set varPrefix for this design unit
-// TODO: longer code snippet
-throw new ece351.util.Todo351Exception();
+			varPrefix = designUnit.entity.identifier;
+			for (Statement statement : designUnit.arch.statements) {
+				if (statement.getClass() == AssignmentStatement.class) {
+					result = result.append(new AssignmentStatement(varPrefix + ((AssignmentStatement)statement).outputVar, this.traverseExpr(((AssignmentStatement)statement).expr)));
+				} else if (statement.getClass() == IfElseStatement.class) {
+					result = result.appendAll(implication((IfElseStatement)statement));
+//					for (AssignmentStatement assignmentStatement : implication((IfElseStatement)statement).formulas) {
+//						result = result.append(assignmentStatement);
+//					}
+				} else {
+					// statement is a Process
+					for (Statement processStatement : ((Process)statement).sequentialStatements) {
+						if (processStatement.getClass() == AssignmentStatement.class) {
+							result = result.append(new AssignmentStatement(varPrefix + ((AssignmentStatement)processStatement).outputVar, this.traverseExpr(((AssignmentStatement)processStatement).expr)));
+						} else {
+							// processStatement is an IfElseStatement
+							result = result.appendAll(implication((IfElseStatement)processStatement));
+//							for (AssignmentStatement assignmentStatement : implication((IfElseStatement)processStatement).formulas) {
+//								result = result.append(assignmentStatement);
+//							}
+						}
+					}
+				}
+			}
+		}
 		return result;
 	}
 	
@@ -104,8 +128,12 @@ throw new ece351.util.Todo351Exception();
 		}
 
 		// build result
-// TODO: longer code snippet
-throw new ece351.util.Todo351Exception();
+		FProgram result = new FProgram();
+		condCount++;
+		VarExpr conditionExpr = new VarExpr(conditionPrefix + condCount);
+		result = result.append(new AssignmentStatement(conditionExpr, this.traverseExpr(statement.condition)));
+		result = result.append(new AssignmentStatement(varPrefix + ifb.outputVar, new OrExpr(new AndExpr(conditionExpr, this.traverseExpr(ifb.expr)), new AndExpr(new NotExpr(conditionExpr), this.traverseExpr(elb.expr)))));
+		return result;
 	}
 
 	/** Rewrite var names with prefix to mitigate name collision. */

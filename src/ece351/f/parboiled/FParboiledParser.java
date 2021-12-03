@@ -161,7 +161,7 @@ public /*final*/ class FParboiledParser extends FBase implements Constants {
 	public Rule Var() {
 		return Sequence(
 				TestNot(Keyword()),
-				OneOrMore(Char()),
+				Sequence(Char(), ZeroOrMore(FirstOf(Char(), Digit(), "_"))),
 				push(new VarExpr(match()))
 				);
 	}

@@ -52,8 +52,8 @@ import ece351.w.svg.TransformW2SVG;
 
 public class TestEnd2End extends BaseTest351 {
 
-	final static File studentOut = newFile("tests/vhdl/student.out/end2end");
-	final static File staffOut = newFile("tests/vhdl/staff.out/end2end/");
+	final static File studentOut = newFile("tests/v/student.out/end2end");
+	final static File staffOut = newFile("tests/v/staff.out/end2end/");
 
 	private static File newFile(final String s) {
 		return new File(s.replace("/", TestSimulatorGenerator.sep));
