@@ -80,25 +80,75 @@ public final class Splitter extends PostOrderExprVisitor {
 	}
 
 	private VProgram splitit(final VProgram program) {
+		VProgram result = new VProgram();
+		for (DesignUnit designUnit : program.designUnits) {
+			ImmutableList<Statement> statements = ImmutableList.of();
+			for (Statement statement : designUnit.arch.statements) {
+				if (statement.getClass() == Process.class) {
 					// Determine if the process needs to be split into multiple processes
-						// Split the process if there are if/else statements so that the if/else statements only assign values to one pin
-// TODO: longer code snippet
-throw new ece351.util.Todo351Exception();
+					// According to a campuswire thread, a process can either only contain ifElseStatements or AssignmentStatements
+					if (!((Process)statement).sequentialStatements.isEmpty() && ((Process)statement).sequentialStatements.get(0).getClass() == IfElseStatement.class) {
+						for (Statement ifElseStatement : ((Process)statement).sequentialStatements) {
+							ImmutableList<Statement> processes = splitIfElseStatement((IfElseStatement)ifElseStatement);
+							for (Statement process : processes) {
+								statements = statements.append(process);
+							}
+						}
+					} else {
+						statements = statements.append(statement);
+					}
+				} else {
+					statements = statements.append(statement);
+				}
+			}
+			DesignUnit newDesignUnit = new DesignUnit(new Architecture(statements, designUnit.arch.components, designUnit.arch.signals, designUnit.arch.entityName, designUnit.arch.architectureName), designUnit.entity);
+			result = result.append(newDesignUnit);
+		}
+		return result;
 	}
 	
 	// You do not have to use this helper method, but we found it useful
-	
 	private ImmutableList<Statement> splitIfElseStatement(final IfElseStatement ifStmt) {
-		// loop over each statement in the ifBody
-			// loop over each statement in the elseBody
-				// check if outputVars are the same
-					// initialize/clear this.usedVarsInExpr
-					// call traverse a few times to build up this.usedVarsInExpr
-					// build sensitivity list from this.usedVarsInExpr
-					// build the resulting list of split statements
+		ImmutableList<Statement> processes = ImmutableList.of();
+		
+		if (ifStmt.ifBody.size() <= 1) {
+			// Simply create new process for this ifElseStatement
+			this.usedVarsInExpr.clear();
+			this.traverseExpr(ifStmt.ifBody.get(0).expr);
+			this.traverseExpr(ifStmt.elseBody.get(0).expr);
+			this.traverseExpr(ifStmt.condition);
+			ImmutableList<String> sensitivityList = ImmutableList.of();
+			for (String usedVar : this.usedVarsInExpr) {
+				sensitivityList = sensitivityList.append(usedVar);
+			}
+			processes = processes.append(new Process(ImmutableList.of(ifStmt), sensitivityList));
+		} else {
+			// loop over each statement in the ifBody
+			for (AssignmentStatement ifBodyStatement : ifStmt.ifBody) {
+				// loop over each statement in the elseBody
+				for (AssignmentStatement elseBodyStatement : ifStmt.elseBody) {
+					// check if outputVars are the same
+					if (ifBodyStatement.outputVar.equals(elseBodyStatement.outputVar)) {
+						// initialize/clear this.usedVarsInExpr
+						this.usedVarsInExpr.clear();
+						// call traverse a few times to build up this.usedVarsInExpr
+						this.traverseExpr(ifBodyStatement.expr);
+						this.traverseExpr(elseBodyStatement.expr);
+						this.traverseExpr(ifStmt.condition);
+						// build sensitivity list from this.usedVarsInExpr
+						ImmutableList<String> sensitivityList = ImmutableList.of();
+						for (String usedVar : this.usedVarsInExpr) {
+							sensitivityList = sensitivityList.append(usedVar);
+						}
+						// build the resulting list of split statements
+						IfElseStatement ifElseStatement = new IfElseStatement(ImmutableList.of(elseBodyStatement), ImmutableList.of(ifBodyStatement), ifStmt.condition);
+						processes = processes.append(new Process(ImmutableList.of(ifElseStatement), sensitivityList));
+					}
+				}
+			}
+		}
 		// return result
-// TODO: longer code snippet
-throw new ece351.util.Todo351Exception();
+		return processes;
 	}
 
 	@Override
