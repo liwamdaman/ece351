@@ -1,0 +1,4 @@
+In this case, it's best to use the interpreter pattern for writing this compiler.
+The alternative (that we learned in class) is using the visitor pattern, however this pattern is best suited for when we expect to add more operations over time.
+In this case, the set of operations that are to be performed are concrete and unchanging. They are addition and multiplication.
+The large benefit of using the interpreter pattern is that it lets us change the AST structure easily, which is very helpful in this scenario. We know that we only need to perform addition and multiplication, however the set of datatypes that will be used are plentiful not quite known. The interpreter pattern will let us add more datatypes easily in the future.
